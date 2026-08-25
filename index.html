@@ -193,7 +193,7 @@
 
   /* table that pops in — outer wrapper handles responsive size to match the figure */
   .table-scale{
-    position:absolute; bottom:8%; left:58%;
+    position:absolute; bottom:8%; left:47%;
     transform:translateX(-50%) scale(var(--figScale, 1));
     transform-origin:bottom center;
     z-index:4;
@@ -307,30 +307,35 @@
     50%{ box-shadow:0 8px 30px rgba(255,215,106,.9); }
   }
 
-  /* speech bubble */
+  /* speech bubble — anchored to the character's mouth via JS, grows out from there */
   .bubble{
-    position:absolute; bottom:78%; left:20%;
+    position:fixed; left:0; bottom:0;
     background:var(--cream); color:var(--dark1);
     font-family:'Fredoka', sans-serif; font-weight:600;
     font-size:clamp(13px,1.8vw,17px);
     padding:14px 18px; border-radius:16px;
     max-width:min(60vw, 320px);
     box-shadow:0 10px 24px rgba(0,0,0,.35);
-    opacity:0; transform:scale(.6) translateY(10px);
-    transform-origin:bottom left;
-    z-index:6;
+    opacity:0; transform:scale(.04) rotate(-6deg);
+    transform-origin:18px 100%;
+    z-index:16;
     line-height:1.35;
     white-space:pre-line;
   }
   .bubble::after{
-    content:''; position:absolute; bottom:-10px; left:22px;
+    content:''; position:absolute; bottom:-10px; left:16px;
     border-width:10px 10px 0 0; border-style:solid;
     border-color:var(--cream) transparent transparent transparent;
   }
   .bubble.show{
-    animation:bubblePop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    animation:bubblePop .7s cubic-bezier(.22,1.4,.4,1) forwards;
   }
-  @keyframes bubblePop{ to{ opacity:1; transform:scale(1) translateY(0); } }
+  @keyframes bubblePop{
+    0%{ opacity:0; transform:scale(.04) rotate(-6deg); }
+    55%{ opacity:1; transform:scale(1.08) rotate(1deg); }
+    75%{ transform:scale(.96) rotate(-1deg); }
+    100%{ opacity:1; transform:scale(1) rotate(0deg); }
+  }
   .cursor{ display:inline-block; width:2px; background:var(--dark1); margin-left:1px; animation:blink 1s step-end infinite; }
   @keyframes blink{ 50%{ opacity:0; } }
 
@@ -569,7 +574,10 @@
     document.documentElement.style.setProperty('--figScale', scale.toFixed(3));
   }
   updateFigScale();
-  window.addEventListener('resize', updateFigScale);
+  window.addEventListener('resize', ()=>{
+    updateFigScale();
+    if(bubble.classList.contains('show')) positionBubbleAtMouth();
+  });
 
   function aimSpotlightAt(el){
     const r = el.getBoundingClientRect();
@@ -577,6 +585,15 @@
     const cy = r.top + r.height/2;
     spotlight.style.setProperty('--sx', (cx / window.innerWidth * 100)+'%');
     spotlight.style.setProperty('--sy', (cy / window.innerHeight * 100)+'%');
+  }
+
+  function positionBubbleAtMouth(){
+    const r = figure.getBoundingClientRect();
+    // mouth sits on the lower-right of the head, roughly 62% across and 16% down the figure box
+    const mouthX = r.left + r.width * 0.66;
+    const mouthY = r.top + r.height * 0.14;
+    bubble.style.left = mouthX + 'px';
+    bubble.style.bottom = (window.innerHeight - mouthY + 8) + 'px';
   }
 
   async function runScene(){
@@ -593,11 +610,11 @@
     await wait(900);
     figure.classList.remove('reaching');
 
-    // 3. walk a little closer to stand beside where the table will appear
+    // 3. walk a little closer to stand right beside the table
     await wait(300);
     figure.classList.add('walking');
-    figure.style.left = '34%';
-    await wait(3200);
+    figure.style.left = '38%';
+    await wait(2600);
     figure.classList.remove('walking');
 
     // 4. a table pops in with the lit cake on it
@@ -630,6 +647,7 @@
     playCelebrateSound();
     sparkleBurst(cake, 18);
     await wait(200);
+    positionBubbleAtMouth();
     bubble.classList.add('show');
     await wait(300);
     await typewriter(bubble, "Happy Birthday! 🎉", 38);
