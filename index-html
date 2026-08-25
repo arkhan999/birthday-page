@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultra Premium Birthday Wish</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #000428, #004e92);
+        font-family: 'Poppins', sans-serif;
+        overflow: hidden;
+        text-align: center;
+        color: #fff;
+    }
+
+    h1 {
+        margin-top: 100px;
+        font-size: 65px;
+        animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 15px #fff; }
+        to { text-shadow: 0 0 35px gold; }
+    }
+
+    .name {
+        font-size: 75px;
+        font-weight: bold;
+        margin-top: 10px;
+        animation: sparkle 1.5s infinite;
+        background: linear-gradient(90deg, gold, #ff00ff, #00eaff);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    @keyframes sparkle {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+
+    .msg {
+        font-size: 26px;
+        margin-top: 20px;
+        color: #dff9fb;
+    }
+
+    /* Floating Balloons */
+    .balloon {
+        position: absolute;
+        width: 60px;
+        height: 80px;
+        border-radius: 50%;
+        animation: floatUp 6s linear infinite;
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(100vh); opacity: 1; }
+        100% { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    /* Floating Hearts */
+    .heart {
+        position: absolute;
+        font-size: 30px;
+        color: #ff3366;
+        animation: floatHeart 5s linear infinite;
+    }
+
+    @keyframes floatHeart {
+        0% { transform: translateY(100vh); opacity: 1; }
+        100% { transform: translateY(-120vh); opacity: 0; }
+    }
+
+    /* Floating Feathers */
+    .feather {
+        position: absolute;
+        font-size: 25px;
+        color: #ffffffaa;
+        animation: floatFeather 7s linear infinite;
+    }
+
+    @keyframes floatFeather {
+        0% { transform: translateY(-20vh); opacity: 1; }
+        100% { transform: translateY(120vh); opacity: 0; }
+    }
+
+    /* Roses */
+    .rose {
+        position: absolute;
+        font-size: 40px;
+        animation: fallRose 6s linear infinite;
+    }
+
+    @keyframes fallRose {
+        0% { transform: translateY(-20vh); opacity: 1; }
+        100% { transform: translateY(120vh); opacity: 0; }
+    }
+
+    /* Fireworks */
+    .firework {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: gold;
+        border-radius: 50%;
+        animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(20); opacity: 0; }
+    }
+
+    /* Music Button */
+    .btn {
+        margin-top: 40px;
+        padding: 15px 35px;
+        background: gold;
+        border: none;
+        border-radius: 10px;
+        font-size: 22px;
+        cursor: pointer;
+        color: #000;
+        font-weight: bold;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    /* Surprise Popup */
+    #popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #000000dd;
+        padding: 30px;
+        border-radius: 20px;
+        color: gold;
+        font-size: 30px;
+        display: none;
+        animation: popIn 1s ease-out;
+    }
+
+    @keyframes popIn {
+        from { transform: scale(0.5) translate(-50%, -50%); opacity: 0; }
+        to { transform: scale(1) translate(-50%, -50%); opacity: 1; }
+    }
+</style>
+</head>
+
+<body>
+
+<h1>✨ Happy Birthday ✨</h1>
+<div class="name">Md</div>
+
+<p class="msg">May your life shine with love, joy, success & endless blessings ❤️</p>
+
+<button class="btn" onclick="playMusic()">Play Romantic Music 🎵</button>
+
+<audio id="music" src="your-music-file.mp3"></audio>
+
+<div id="popup">🎁 Surprise! You are truly special ❤️</div>
+
+<script>
+function playMusic() {
+    document.getElementById("music").play();
+    showPopup();
+}
+
+function showPopup() {
+    document.getElementById("popup").style.display = "block";
+    setTimeout(() => {
+        document.getElementById("popup").style.display = "none";
+    }, 4000);
+}
+
+/* Balloons */
+function createBalloon() {
+    const balloon = document.createElement("div");
+    balloon.classList.add("balloon");
+    balloon.style.left = Math.random() * window.innerWidth + "px";
+    balloon.style.background = randomBalloonColor();
+    balloon.style.animationDuration = (Math.random() * 3 + 5) + "s";
+    document.body.appendChild(balloon);
+    setTimeout(() => balloon.remove(), 7000);
+}
+
+function randomBalloonColor() {
+    const colors = ["#ff4d6d", "#00eaff", "#ffdd00", "#9b5de5"];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+/* Hearts */
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+}
+
+/* Feathers */
+function createFeather() {
+    const feather = document.createElement("div");
+    feather.classList.add("feather");
+    feather.innerHTML = "🕊️";
+    feather.style.left = Math.random() * window.innerWidth + "px";
+    feather.style.animationDuration = (Math.random() * 4 + 6) + "s";
+    document.body.appendChild(feather);
+    setTimeout(() => feather.remove(), 7000);
+}
+
+/* Roses */
+function createRose() {
+    const rose = document.createElement("div");
+    rose.classList.add("rose");
+    rose.innerHTML = "🌹";
+    rose.style.left = Math.random() * window.innerWidth + "px";
+    rose.style.animationDuration = (Math.random() * 3 + 5) + "s";
+    document.body.appendChild(rose);
+    setTimeout(() => rose.remove(), 7000);
+}
+
+/* Fireworks */
+function createFirework() {
+    const fw = document.createElement("div");
+    fw.classList.add("firework");
+    fw.style.left = Math.random() * window.innerWidth + "px";
+    fw.style.top = Math.random() * window.innerHeight + "px";
+    document.body.appendChild(fw);
+    setTimeout(() => fw.remove(), 1200);
+}
+
+setInterval(createBalloon, 500);
+setInterval(createHeart, 400);
+setInterval(createFeather, 1500);
+setInterval(createRose, 1200);
+setInterval(createFirework, 800);
+</script>
+
+</body>
+</html>
