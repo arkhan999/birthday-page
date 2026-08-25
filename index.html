@@ -137,13 +137,25 @@
   @keyframes rise{ to{ transform:translateY(-140vh); } }
   @keyframes swayB{ 0%,100%{ margin-left:0; } 50%{ margin-left:22px; } }
 
+  .ambient-bit{
+    position:absolute; bottom:-4%;
+    animation-name:ambientRise; animation-timing-function:ease-out;
+    animation-iteration-count:1;
+    opacity:.9;
+  }
+  @keyframes ambientRise{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    12%{ opacity:1; }
+    100%{ transform:translateY(-46vh) rotate(18deg); opacity:0; }
+  }
+
   /* ---- stick figure ---- */
   .figure{
     position:absolute; bottom:8%; left:-15%;
     width:50px; height:110px;
     z-index:5;
     transition:left 7s linear;
-    transform:scale(var(--figScale, 1));
+    transform:scale(calc(var(--figScale, 1) * 1.18));
     transform-origin:bottom center;
   }
   .fpart{ position:absolute; background:var(--cream); border-radius:3px; }
@@ -151,6 +163,33 @@
     width:22px; height:22px; border-radius:50%;
     top:0; left:14px;
     background:var(--cream);
+    animation:headBob 2.6s ease-in-out infinite;
+  }
+  @keyframes headBob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-1.5px); }
+  }
+  .eye{
+    position:absolute; top:9px; width:2.4px; height:2.4px;
+    border-radius:50%; background:var(--dark1);
+    animation:eyeBlink 4.2s ease-in-out infinite;
+  }
+  .eye.l{ left:8px; }
+  .eye.r{ left:14px; }
+  @keyframes eyeBlink{
+    0%,92%,100%{ transform:scaleY(1); }
+    95%{ transform:scaleY(.1); }
+  }
+  .blush{
+    position:absolute; top:13px; width:4px; height:2.6px;
+    border-radius:50%; background:var(--warm2); opacity:.7;
+  }
+  .blush.l{ left:3px; }
+  .blush.r{ left:15px; }
+  .smile{
+    position:absolute; top:14px; left:8px; width:6px; height:3px;
+    border-radius:0 0 6px 6px;
+    border-bottom:1.4px solid var(--dark1);
   }
   .hair{
     position:absolute; top:-9px; left:16px; width:20px; height:12px;
@@ -191,10 +230,10 @@
   @keyframes cheerL{ 0%,100%{ transform:rotate(-145deg); } 50%{ transform:rotate(-110deg); } }
   @keyframes cheerR{ 0%,100%{ transform:rotate(145deg); } 50%{ transform:rotate(110deg); } }
 
-  /* table that pops in — outer wrapper handles responsive size to match the figure */
+  /* table that pops in — outer wrapper handles responsive size, kept smaller than the figure */
   .table-scale{
-    position:absolute; bottom:8%; left:47%;
-    transform:translateX(-50%) scale(var(--figScale, 1));
+    position:absolute; bottom:8%; left:44%;
+    transform:translateX(-50%) scale(calc(var(--figScale, 1) * 0.8));
     transform-origin:bottom center;
     z-index:4;
   }
@@ -208,17 +247,17 @@
     opacity:1; transform:scale(1) translateY(0);
   }
   .table-top{
-    width:132px; height:12px; border-radius:4px;
+    width:112px; height:11px; border-radius:4px;
     background:linear-gradient(180deg, #d8ac77, #8a5f36);
     box-shadow:0 6px 10px rgba(0,0,0,.35);
   }
   .table-leg{
-    position:absolute; width:8px; height:42px;
+    position:absolute; width:7px; height:34px;
     background:linear-gradient(180deg, #7a5330, #5a3c22);
-    top:12px;
+    top:11px;
   }
-  .table-leg.l{ left:12px; }
-  .table-leg.r{ right:12px; }
+  .table-leg.l{ left:10px; }
+  .table-leg.r{ right:10px; }
 
   /* cake on the table */
   .cake{
@@ -373,7 +412,13 @@
 
   <div class="figure" id="figure">
     <div class="hair"></div>
-    <div class="fpart head"></div>
+    <div class="fpart head">
+      <div class="eye l"></div>
+      <div class="eye r"></div>
+      <div class="blush l"></div>
+      <div class="blush r"></div>
+      <div class="smile"></div>
+    </div>
     <div class="fpart torso"></div>
     <div class="fpart arm-l"></div>
     <div class="fpart arm-r"></div>
@@ -444,15 +489,38 @@
 
   // balloons
   const balloonColors = ['#ff9ecb','#ffc98b','#8ff3d0','#c9a7ff','#ff7ab3','#ffe08a'];
-  for(let i=0;i<7;i++){
+  for(let i=0;i<9;i++){
     const b = document.createElement('div');
     b.className='balloon';
     b.style.background = balloonColors[i % balloonColors.length];
-    b.style.left = (6 + i*13 + Math.random()*6)+'%';
+    b.style.left = (4 + i*10.5 + Math.random()*5)+'%';
     const dur = 18 + Math.random()*10;
     b.style.animationDuration = dur+'s, '+(4+Math.random()*2.5)+'s';
     b.style.animationDelay = (-Math.random()*dur)+'s, 0s';
     balloonLayer.appendChild(b);
+  }
+
+  // ambient sparkles/hearts once the room is lit — pure charm, no function
+  const ambientEmoji = ['✨','💛','⭐','💖'];
+  let ambientTimer = null;
+  function spawnAmbientBit(){
+    const bit = document.createElement('div');
+    bit.className = 'ambient-bit';
+    bit.textContent = ambientEmoji[Math.floor(Math.random()*ambientEmoji.length)];
+    bit.style.left = (5 + Math.random()*90) + '%';
+    const dur = 4 + Math.random()*2.5;
+    bit.style.animationDuration = dur+'s';
+    bit.style.fontSize = (10 + Math.random()*8) + 'px';
+    balloonLayer.appendChild(bit);
+    setTimeout(()=>bit.remove(), dur*1000);
+  }
+  function startAmbient(){
+    if(ambientTimer) return;
+    ambientTimer = setInterval(spawnAmbientBit, 700);
+  }
+  function stopAmbient(){
+    clearInterval(ambientTimer);
+    ambientTimer = null;
   }
 
   function burstConfetti(){
@@ -607,6 +675,7 @@
     figure.classList.add('reaching');
     await wait(500);
     room.classList.add('lit');
+    startAmbient();
     await wait(900);
     figure.classList.remove('reaching');
 
