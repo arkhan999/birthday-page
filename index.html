@@ -1,629 +1,274 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday Shorty Sabrina!</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Animated Birthday Wish — Sabrina</title>
 <style>
-  :root{
-    --pink-grad: linear-gradient(135deg, #ffc4d1, #F89BA8);
-    --cake-a: #C08D79;
-    --cake-b: #B27C68;
-    --seam: #8F5B48;
-    --frost: #FFFDF9;
-    --plate: #FFFFFF;
-    --plate-shadow: #E7A9B4;
-    --text-dark: #580d17;
-    --text-light: #9B4451;
-    --candle-line: #E9DCD7;
-    --face: #3A2A2A;
-    --bg-dark: #2a1b38;
-  }
-  *{ box-sizing: border-box; }
-  
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background: var(--bg-dark);
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-  }
-  
-  body {
-    min-height: 100vh; 
-    padding: 24px 12px;
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 24px;
+  :root{ --bg:#0b1020; --light:#fff3d9; --accent:#ff7aa2; --card:#fef6f8 }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto;display:flex;align-items:center;justify-content:center}
+  /* outer responsive container; inner scene scales to fit */
+  .stage{width:min(920px,96vw);aspect-ratio:16/9;background:linear-gradient(180deg,#111326 0%, #0b1020 100%);border-radius:12px;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(2,6,23,0.8);display:flex;align-items:center;justify-content:center}
+  .stage-inner{width:900px;height:540px;position:relative;transform-origin:center center;--s:1;transform:scale(var(--s));}
+
+  /* room floor */
+  .floor{position:absolute;left:0;right:0;bottom:0;height:170px;background:linear-gradient(180deg,#2b2330,#1c1520);box-shadow:inset 0 20px 40px rgba(0,0,0,0.6)}
+
+  /* main character */
+  .char{position:absolute;left:-160px;bottom:100px;width:120px;height:160px;display:flex;align-items:flex-end;justify-content:center;transition:transform .5s ease}
+  .char .body{width:84px;height:110px;background:linear-gradient(180deg,#ffd9e6,#ffc4dc);border-radius:44px 44px 24px 24px;position:relative;box-shadow:0 8px 18px rgba(0,0,0,0.25)}
+  .char .face{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:56px;height:46px;border-radius:18px;background:white;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .eye{width:6px;height:6px;background:#2b1f25;border-radius:50%;margin:0 8px}
+  .mouth{width:18px;height:8px;border-radius:8px;background:#2b1f25;margin-top:6px}
+  .char.enter{transform:translateX(480px)}
+
+  /* lamp */
+  .lamp{position:absolute;left:42%;top:36px;width:82px;height:120px;opacity:0;transform-origin:top center}
+  .lamp .bulb{width:50px;height:50px;border-radius:50%;background:#4a3a59;margin:18px auto 0;box-shadow:0 0 0 rgba(255,240,200,0)}
+  .lamp.on{opacity:1;box-shadow:0 10px 80px rgba(255,220,140,0.06);}
+  .lamp.on .bulb{background:var(--light);box-shadow:0 0 28px 8px rgba(255,230,160,0.18),0 0 80px 18px rgba(255,200,100,0.05)}
+
+  /* table */
+  .table{position:absolute;left:50%;transform:translateX(-50%) scale(0.6);bottom:84px;width:420px;height:28px;background:#2f232f;border-radius:8px;opacity:0;transition:all .6s cubic-bezier(.2,.9,.3,1)}
+  .table.raised{opacity:1;transform:translateX(-50%) scale(1)}
+  .table.legs::before,.table.legs::after{content:'';position:absolute;background:#2f232f;width:18px;height:80px;bottom:-80px}
+  .table.legs::before{left:70px}
+  .table.legs::after{right:70px}
+
+  /* cake */
+  .cake{position:absolute;left:50%;transform:translateX(-50%) scale(0.4);bottom:120px;width:220px;height:120px;border-radius:18px;background:linear-gradient(180deg,#ffecf0,#ffd7e3);box-shadow:0 12px 30px rgba(0,0,0,0.35);opacity:0;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:all .6s cubic-bezier(.2,.9,.3,1)}
+  .cake.show{opacity:1;transform:translateX(-50%) scale(1)}
+  .cake .icing{width:100%;height:36px;background:linear-gradient(180deg,#fff8fb,#fff1f6);border-radius:14px 14px 0 0;position:absolute;top:-12px}
+  .cake .text{position:relative;color:#7a1020;font-weight:800;font-family: 'Poppins',sans-serif}
+
+  /* candle */
+  .candle{position:relative;width:12px;height:44px;background:#fff3d9;border-radius:4px;box-shadow:inset 0 -4px 0 rgba(0,0,0,0.06)}
+  .flame{position:absolute;left:50%;top:-22px;transform:translateX(-50%);width:18px;height:24px;border-radius:50% 50% 40% 40%/60% 60% 40% 40%;background:linear-gradient(180deg,#ffdca6,#ff7a3d);box-shadow:0 6px 20px rgba(255,150,60,0.35);opacity:0;transform-origin:50% 70%;transition:opacity .18s}
+  .flame.on{opacity:1;animation:flick 0.9s ease-in-out infinite}
+  @keyframes flick{0%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)} }
+
+  /* smoke (when blow) */
+  .smoke{position:absolute;width:12px;height:12px;background:rgba(230,230,240,0.85);border-radius:50%;left:50%;top:-34px;transform:translateX(-50%) scale(0.2);opacity:0}
+  .smoke.up{animation:smokeUp 1.2s ease-out forwards}
+  @keyframes smokeUp{0%{transform:translateX(-50%) translateY(0) scale(0.2);opacity:0.6}100%{transform:translateX(-50%) translateY(-48px) scale(1.6);opacity:0}}
+
+  /* balloons container */
+  .balloon{position:absolute;bottom:140px;left:40%;width:48px;height:66px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#ff8fab;transform-origin:center bottom;opacity:0}
+  .balloon.pop{animation:risePop 1.2s ease-out forwards}
+  @keyframes risePop{0%{transform:translateY(0) scale(1);opacity:1}70%{transform:translateY(-160px) scale(1)}100%{transform:translateY(-220px) scale(0.2);opacity:0}}
+
+  /* confetti pieces */
+  .conf{position:absolute;width:8px;height:12px;border-radius:2px;opacity:0.95}
+
+  /* crowd characters */
+  .crowd{position:absolute;left:100%;bottom:90px;height:160px;display:flex;gap:18px;align-items:flex-end;padding-right:40px;transition:left .9s cubic-bezier(.2,.9,.3,1)}
+  .crowd.show{left:40px}
+  .mini{width:72px;height:110px;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px}
+  .bubble{position:absolute;left:50%;transform:translateX(-50%) scale(0.2);bottom:270px;background:#fff;color:#20121a;padding:10px 14px;border-radius:18px;opacity:0;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+  .bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
+
+  /* control */
+  .controls{position:absolute;right:18px;top:18px;}
+  .btn{background:linear-gradient(90deg,#ffd27a,#ff8fab);border:none;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+
+  /* responsive tweaks */
+  @media (max-width:720px){
+    .stage{height:78vh}
+    .btn{padding:14px 18px;font-size:16px}
   }
 
-  /* Responsive container */
-  .frame {
-    position: relative;
-    width: 100%;
-    max-width: 480px;
-    aspect-ratio: 400 / 300;
-    animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
-  
-  @keyframes popIn {
-    0% { transform: scale(0.6); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .stars { position: absolute; inset: 0; }
-  .stars i {
-    position: absolute;
-    width: 2.5px; height: 2.5px;
-    background: #ffffff;
-    border-radius: 50%;
-    opacity: 0.5;
-    animation: twinkle 3s infinite ease-in-out;
-  }
-
-  .card {
-    position: absolute;
-    inset: 0;
-    background: white;
-    padding: 1.8%;
-    border-radius: 12px;
-    box-shadow: 0 25px 70px rgba(0,0,0,0.6);
-    overflow: hidden;
-  }
-  
-  .card-inner {
-    width: 100%; height: 100%;
-    background: var(--pink-grad);
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Floating background elements inside the card */
-  .floating-elements {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-  .floater {
-    position: absolute;
-    bottom: -20px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 16px;
-    animation: floatUp linear infinite;
-    opacity: 0;
-  }
-
-  @keyframes floatUp {
-    0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-300px) rotate(360deg) scale(1.2); opacity: 0; }
-  }
-
-  svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-
-  /* --- CUTE ANIMATIONS --- */
-  .cake-grp {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: cakeSeq 8s ease-in-out infinite;
-  }
-  .frost-grp {
-    transform-box: fill-box;
-    transform-origin: 50% 0%;
-    animation: frostSeq 8s ease-in-out infinite;
-  }
-  .candle-grp {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: candleSeq 8s ease-in-out infinite;
-  }
-  
-  /* Blushing cheeks */
-  .blush {
-    animation: blushPulse 2.5s infinite ease-in-out;
-  }
-  @keyframes blushPulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.2); }
-  }
-
-  /* Dancing Sidekicks */
-  .sidekick {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-  }
-  .left-sidekick {
-    animation: sidekickJump 1.4s ease-in-out infinite;
-  }
-  .right-sidekick {
-    animation: sidekickJump 1.4s ease-in-out infinite 0.7s;
-  }
-  @keyframes sidekickJump {
-    0%, 100% { transform: translateY(0) scale(1, 1); }
-    40% { transform: translateY(-12px) scale(0.95, 1.05); }
-    50% { transform: translateY(-16px) scale(1, 1); }
-    60% { transform: translateY(-12px) scale(1.05, 0.95); }
-    80% { transform: translateY(0) scale(1.1, 0.9); }
-    90% { transform: translateY(0) scale(1, 1); }
-  }
-
-  .flame-outer {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: flameShow 8s ease-in-out infinite;
-  }
-  .flame-inner {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: flicker 0.9s ease-in-out infinite;
-  }
-  .eye {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    animation: blink 5s ease-in-out infinite;
-  }
-  .mouth-smile { opacity: 1; transition: opacity .15s ease; }
-  .mouth-sing, .mouth-sing-tongue { opacity: 0; transition: opacity .15s ease; }
-  .brow { opacity: 0; transition: opacity .15s ease; }
-
-  @keyframes cakeSeq {
-    0%       { transform: scale(1, 0.03); }
-    3%       { transform: scale(1, 0.03); }
-    7%       { transform: scale(0.93, 1.22); }
-    9.5%     { transform: scale(1.05, 0.88); }
-    12%      { transform: scale(0.98, 1.05); }
-    14%      { transform: scale(1, 1); }
-    80%      { transform: scale(1, 1); }
-    80.6%    { transform: scale(1, 0.03); }
-    100%     { transform: scale(1, 0.03); }
-  }
-  @keyframes frostSeq {
-    0%, 15%  { opacity: 0; transform: scale(1, 0.05); }
-    16%      { opacity: 1; transform: scale(1, 0.05); }
-    20%      { transform: scale(0.94, 1.25); }
-    22.5%    { transform: scale(1.04, 0.9); }
-    25%      { transform: scale(1, 1); opacity: 1; }
-    80%      { transform: scale(1, 1); opacity: 1; }
-    80.6%    { opacity: 0; transform: scale(1, 0.05); }
-    100%     { opacity: 0; transform: scale(1, 0.05); }
-  }
-  @keyframes candleSeq {
-    0%, 24%  { opacity: 0; transform: scale(1, 0.05); }
-    25%      { opacity: 1; transform: scale(1, 0.05); }
-    28%      { transform: scale(0.9, 1.3); }
-    30%      { transform: scale(1.06, 0.9); }
-    32%      { transform: scale(1, 1); opacity: 1; }
-    80%      { transform: scale(1, 1); opacity: 1; }
-    80.6%    { opacity: 0; transform: scale(1, 0.05); }
-    100%     { opacity: 0; transform: scale(1, 0.05); }
-  }
-  @keyframes flameShow {
-    0%, 31%  { opacity: 0; transform: scale(0.3); }
-    35%      { opacity: 1; transform: scale(1.15); }
-    37%      { transform: scale(0.95); }
-    39%      { transform: scale(1); }
-    79%      { opacity: 1; transform: scale(1); }
-    80%      { opacity: 0; transform: scale(0.3); }
-    100%     { opacity: 0; transform: scale(0.3); }
-  }
-  @keyframes flicker {
-    0%   { transform: rotate(-3deg) scale(1); }
-    50%  { transform: rotate(3deg) scale(1.06); }
-    100% { transform: rotate(-3deg) scale(1); }
-  }
-  @keyframes blink {
-    0%, 90%, 100% { transform: scaleY(1); }
-    92%           { transform: scaleY(0.1); }
-    94%           { transform: scaleY(1); }
-    96%           { transform: scaleY(0.1); }
-    98%           { transform: scaleY(1); }
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-  }
-
-  .wish-text {
-    font-family: 'Poppins', sans-serif;
-  }
-  .name-text {
-    font-weight: 800;
-  }
-
-  /* ---------- PARTY MODE ---------- */
-  .card-inner.partying .cake-grp { animation: none; transform: scale(1,1); }
-  .card-inner.partying .frost-grp { animation: none; transform: scale(1,1); opacity:1; }
-  .card-inner.partying .candle-grp { animation: none; transform: scale(1,1); opacity:1; }
-  .card-inner.partying .flame-outer { animation: none; transform: scale(1); opacity:1; }
-  .card-inner.partying .flame-inner { animation-duration: 0.28s; }
-  .card-inner.partying .mouth-smile { opacity:0; }
-  .card-inner.partying .mouth-sing,
-  .card-inner.partying .mouth-sing-tongue { opacity:1; }
-  .card-inner.partying .brow { opacity:1; }
-
-  #cakeScene { transform-box: fill-box; transform-origin: 50% 100%; }
-  .card-inner.partying #cakeScene {
-    animation: wiggle 0.45s ease-in-out infinite;
-  }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(-4deg) translateY(0); }
-    25%      { transform: rotate(3deg) translateY(-4px); }
-    50%      { transform: rotate(-3deg) translateY(0); }
-    75%      { transform: rotate(4deg) translateY(-4px); }
-  }
-
-  .card-inner.partying text.wish-text {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: textBounce 0.4s ease-in-out infinite;
-  }
-  .card-inner.partying text.name-text { 
-    animation: textBounce 0.4s ease-in-out infinite, rainbowText 1.5s linear infinite; 
-    animation-delay: 0.12s; 
-  }
-  
-  @keyframes textBounce {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50%      { transform: translateY(-5px) scale(1.06); }
-  }
-  @keyframes rainbowText {
-    0% { fill: #6C111D; }
-    33% { fill: #7f1b73; }
-    66% { fill: #b82b4a; }
-    100% { fill: #6C111D; }
-  }
-
-  /* --- CUTE SURPRISE BUTTON --- */
-  .surprise-btn {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 18px;
-    color: #2a1230;
-    background: linear-gradient(90deg, #ffd27a, #ff8fab);
-    border: none;
-    padding: 16px 36px;
-    border-radius: 40px;
-    cursor: pointer;
-    box-shadow: 0 10px 25px rgba(255, 140, 171, 0.4);
-    transition: transform .15s ease, box-shadow .15s ease;
-    animation: btnPulse 2s infinite;
-    z-index: 100;
-  }
-  @keyframes btnPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(255, 140, 171, 0.4); }
-    50% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(255, 140, 171, 0.6); }
-  }
-  .surprise-btn:active { 
-    transform: scale(0.95); 
-    animation: none; 
-    box-shadow: 0 5px 15px rgba(255, 140, 171, 0.3);
-  }
-  .surprise-btn:disabled { 
-    opacity: 0.8; 
-    cursor: default; 
-    animation: none;
-    transform: none; 
-  }
-
-  /* Confetti & Balloons */
-  .confetti-piece {
-    position: absolute;
-    top: -20px;
-    width: 10px; height: 18px;
-    border-radius: 3px;
-    opacity: 0.95;
-    animation-name: confettiFall;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-  }
-  @keyframes confettiFall {
-    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
-  }
-  
-  .balloon-piece {
-    position: absolute;
-    bottom: -150px;
-    width: 48px; height: 62px;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    animation-name: balloonRise;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-  }
-  .balloon-piece::after {
-    content: '';
-    position: absolute;
-    left: 50%; top: 100%;
-    width: 2px; height: 50px;
-    background: rgba(255,255,255,0.6);
-    transform: translateX(-50%);
-  }
-  @keyframes balloonRise {
-    0%   { transform: translateY(0) translateX(0) rotate(-4deg); }
-    50%  { transform: translateY(-58vh) translateX(25px) rotate(4deg); }
-    100% { transform: translateY(-120vh) translateX(-15px) rotate(-4deg); }
+  /* respect user preference for reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
   }
 </style>
 </head>
 <body>
 
-<div class="frame">
-  <div class="stars" id="stars"></div>
-  <div class="card">
-    <div class="card-inner" id="cardInner">
-      
-      <!-- Floating Hearts Background -->
-      <div class="floating-elements" id="floating-elements"></div>
+<div class="stage" id="stage">
+  <div class="stage-inner" id="stageInner">
+  <div class="lamp" id="lamp">
+    <div class="bulb"></div>
+  </div>
 
-      <!-- viewBox controls responsiveness -->
-      <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated birthday cake for Shorty Sabrina">
-        <defs>
-          <linearGradient id="cakeGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="var(--cake-a)"/>
-            <stop offset="30%"  stop-color="var(--cake-a)"/>
-            <stop offset="31.5%" stop-color="var(--seam)"/>
-            <stop offset="33%"  stop-color="var(--cake-b)"/>
-            <stop offset="63%"  stop-color="var(--cake-b)"/>
-            <stop offset="64.5%" stop-color="var(--seam)"/>
-            <stop offset="66%"  stop-color="var(--cake-a)"/>
-            <stop offset="100%" stop-color="var(--cake-a)"/>
-          </linearGradient>
-          <radialGradient id="flameGrad" cx="50%" cy="70%" r="65%">
-            <stop offset="0%"  stop-color="#FFF6C6"/>
-            <stop offset="45%" stop-color="#FFC24D"/>
-            <stop offset="100%" stop-color="#FF7A3D"/>
-          </radialGradient>
-        </defs>
-
-        <!-- WIDER PLATE FOR SIDEKICKS -->
-        <rect x="55" y="182" width="290" height="6" rx="3" fill="var(--plate-shadow)"/>
-        <rect x="55" y="178" width="290" height="6" rx="3" fill="var(--plate)"/>
-
-        <!-- LEFT SIDEKICK (Dancing Cupcake) -->
-        <g class="sidekick left-sidekick">
-          <!-- Wrapper base -->
-          <path d="M 70 178 L 75 158 L 95 158 L 100 178 Z" fill="#D49A89"/>
-          <!-- Frosting top -->
-          <path d="M 68 160 C 68 143, 102 143, 102 160 C 102 166, 68 166, 68 160 Z" fill="#FFB3C6"/>
-          <!-- Cute face -->
-          <circle cx="80" cy="156" r="1.5" fill="#3A2A2A"/>
-          <circle cx="90" cy="156" r="1.5" fill="#3A2A2A"/>
-          <path d="M 83 160 Q 85 163 87 160" stroke="#3A2A2A" fill="none"/>
-          <!-- Cute arms cheering -->
-          <path d="M 75 166 Q 65 163 70 153" stroke="#3A2A2A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M 95 166 Q 105 163 100 153" stroke="#3A2A2A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        </g>
-
-        <!-- RIGHT SIDEKICK (Dancing Cupcake) -->
-        <g class="sidekick right-sidekick">
-          <path d="M 300 178 L 305 158 L 325 158 L 330 178 Z" fill="#D49A89"/>
-          <path d="M 298 160 C 298 143, 332 143, 332 160 C 332 166, 298 166, 298 160 Z" fill="#FFEBB3"/>
-          <circle cx="310" cy="156" r="1.5" fill="#3A2A2A"/>
-          <circle cx="320" cy="156" r="1.5" fill="#3A2A2A"/>
-          <path d="M 313 160 Q 315 163 317 160" stroke="#3A2A2A" fill="none"/>
-          <path d="M 305 166 Q 295 163 300 153" stroke="#3A2A2A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M 325 166 Q 335 163 330 153" stroke="#3A2A2A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        </g>
-
-        <g id="cakeScene">
-          <!-- MAIN CAKE -->
-          <g class="cake-grp">
-            <rect x="125" y="112" width="150" height="68" rx="5" fill="url(#cakeGrad)"/>
-
-            <!-- Brows -->
-            <path class="brow" d="M155,148 Q166,140 179,146" stroke="var(--face)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-            <path class="brow" d="M221,146 Q234,140 245,148" stroke="var(--face)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-
-            <!-- Blushing Cheeks -->
-            <circle cx="153" cy="165" r="7" fill="#ff7da9" class="blush" />
-            <circle cx="247" cy="165" r="7" fill="#ff7da9" class="blush" />
-
-            <!-- Eyes -->
-            <g class="eye">
-              <circle cx="167" cy="160" r="7.5" fill="white"/>
-              <circle cx="168" cy="161" r="3.5" fill="var(--face)"/>
-              <circle cx="165" cy="158" r="1.5" fill="white"/> <!-- Eye Sparkle -->
-            </g>
-            <g class="eye">
-              <circle cx="233" cy="160" r="7.5" fill="white"/>
-              <circle cx="234" cy="161" r="3.5" fill="var(--face)"/>
-              <circle cx="231" cy="158" r="1.5" fill="white"/> <!-- Eye Sparkle -->
-            </g>
-
-            <!-- Mouths -->
-            <path class="mouth-smile" d="M183,170 Q200,178 217,170" stroke="var(--face)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <ellipse class="mouth-sing" cx="200" cy="172" rx="9" ry="7" fill="var(--face)"/>
-            <ellipse class="mouth-sing-tongue" cx="200" cy="176" rx="6" ry="3" fill="#ff5e7e"/>
-          </g>
-
-          <!-- FROSTING & SPRINKLES -->
-          <g class="frost-grp">
-            <rect x="125" y="100" width="150" height="14" rx="7" fill="var(--frost)"/>
-            <path fill="var(--frost)" d="
-              M130,110 C128,110 127,114 129,116 C132,121 134,126 137,126 C140,126 141,120 140,116 C139,113 138,110 137,110 Z
-              M153,110 C150,110 148,116 151,122 C155,132 158,140 162,140 C166,140 167,130 165,123 C163,117 161,110 159,110 Z
-              M177,110 C174,110 172,115 174,119 C177,125 179,128 182,128 C185,128 186,122 185,118 C184,114 182,110 180,110 Z
-              M201,110 C198,110 196,117 199,125 C203,136 206,144 210,144 C214,144 215,133 213,125 C211,118 209,110 207,110 Z
-              M225,110 C222,110 220,114 222,118 C225,123 227,126 230,126 C233,126 234,120 233,116 C232,113 230,110 228,110 Z
-              M249,110 C246,110 244,116 247,122 C251,131 254,138 258,138 C262,138 263,128 261,122 C259,116 257,110 255,110 Z
-            "/>
-            <!-- Cute Sprinkles -->
-            <rect x="145" y="105" width="5" height="2.5" rx="1" fill="#FF8FAB" transform="rotate(15 145 105)"/>
-            <rect x="165" y="112" width="5" height="2.5" rx="1" fill="#8FF0D6" transform="rotate(-25 165 112)"/>
-            <rect x="185" y="102" width="5" height="2.5" rx="1" fill="#C9A7FF" transform="rotate(45 185 102)"/>
-            <rect x="205" y="115" width="5" height="2.5" rx="1" fill="#F6C667" transform="rotate(-15 205 115)"/>
-            <rect x="230" y="105" width="5" height="2.5" rx="1" fill="#FF8FAB" transform="rotate(30 230 105)"/>
-            <rect x="250" y="113" width="5" height="2.5" rx="1" fill="#8FF0D6" transform="rotate(-10 250 113)"/>
-          </g>
-
-          <!-- CANDLE -->
-          <g class="candle-grp">
-            <rect x="196" y="66" width="8" height="36" rx="3" fill="var(--frost)"/>
-            <rect x="196" y="78" width="8" height="3.5" fill="#C9A7FF"/>
-            <rect x="196" y="89" width="8" height="3.5" fill="#FF8FAB"/>
-          </g>
-
-          <g class="flame-outer">
-            <g class="flame-inner">
-              <path fill="url(#flameGrad)" d="
-                M200,65
-                C205,60 206,52 200,45
-                C194,52 195,60 200,65
-                Z
-              "/>
-            </g>
-          </g>
-        </g>
-
-        <!-- UPDATED TEXT -->
-        <text x="200" y="240" text-anchor="middle" class="wish-text" font-size="22" font-weight="500" font-style="italic" fill="var(--text-dark)">Happy Birthday</text>
-        <text x="200" y="275" text-anchor="middle" class="wish-text name-text" font-size="30" fill="var(--text-dark)">Shorty Sabrina!</text>
-      </svg>
+  <div class="char" id="hero">
+    <div class="body">
+      <div class="face">
+        <div style="display:flex;align-items:center">
+          <div class="eye"></div>
+          <div class="eye"></div>
+        </div>
+        <div class="mouth"></div>
+      </div>
     </div>
+  </div>
+
+  <div class="table" id="table"></div>
+  <div class="cake" id="cake">
+    <div class="icing"></div>
+    <div style="position:relative;z-index:3;text-align:center">
+      <div class="text" id="cakeText">Happy Birthday Shorty</div>
+      <div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px">
+        <div class="candle" id="candle">
+          <div class="flame" id="flame"></div>
+          <div class="smoke" id="smoke"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="balloon" id="ball1" style="left:30%;background:#ff9fc2"></div>
+  <div class="balloon" id="ball2" style="left:60%;background:#c9a7ff"></div>
+
+  <div class="floor"></div>
+
+  <div class="crowd" id="crowd">
+    <div class="mini" style="background:linear-gradient(180deg,#ffd9e6,#ffc4dc)"></div>
+    <div class="mini" style="background:linear-gradient(180deg,#fff0b3,#ffe6a6)"></div>
+    <div class="mini" style="background:linear-gradient(180deg,#d0f3ea,#b8f0de)"></div>
+    <div class="mini" style="background:linear-gradient(180deg,#c9a7ff,#e6d9ff)"></div>
+  </div>
+
+  <div class="bubble" id="bubble">Happy Birthday Sabrina!!!</div>
+
+  <div class="controls"><button class="btn" id="startBtn">Start Surprise</button></div>
   </div>
 </div>
 
-<button class="surprise-btn" id="surpriseBtn">🎉 Tap for a Surprise! 🎉</button>
-
 <script>
-  // Outer space stars
-  const starsLayer = document.getElementById('stars');
-  for(let i=0; i<35; i++){
-    const s = document.createElement('i');
-    s.style.left = Math.random()*100+'%';
-    s.style.top = Math.random()*100+'%';
-    s.style.animationDelay = Math.random()*3+'s';
-    starsLayer.appendChild(s);
+  // small helper
+  const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+  const hero = document.getElementById('hero');
+  const lamp = document.getElementById('lamp');
+  const table = document.getElementById('table');
+  const cake = document.getElementById('cake');
+  const flame = document.getElementById('flame');
+  const smoke = document.getElementById('smoke');
+  const ball1 = document.getElementById('ball1');
+  const ball2 = document.getElementById('ball2');
+  const crowd = document.getElementById('crowd');
+  const bubble = document.getElementById('bubble');
+  const fxRoot = document.body;
+  const startBtn = document.getElementById('startBtn');
+
+  async function runSequence(){
+    startBtn.disabled = true;
+    // 1) hero enters
+    hero.classList.add('enter');
+    await wait(900);
+
+    // 2) hero reaches center and turns on lamp (light on)
+    lamp.classList.add('on');
+    stageGlow(true);
+    await wait(800);
+
+    // 3) table appears
+    table.classList.add('raised');
+    await wait(550);
+
+    // 4) cake pops in
+    cake.classList.add('show');
+    // show candle flame
+    flame.classList.add('on');
+    await wait(1200);
+
+    // 5) blow the candle (hero leans and blows)
+    // small body lean animation
+    hero.style.transform = 'translateX(480px) translateY(-6px) rotate(-3deg)';
+    await wait(520);
+    // extinguish flame and spawn smoke
+    flame.classList.remove('on');
+    smoke.classList.add('up');
+    spawnConfetti(28);
+    await wait(700);
+
+    // 6) balloons burst up
+    ball1.classList.add('pop'); ball2.classList.add('pop');
+    spawnBalloons(6);
+    await wait(700);
+
+    // 7) crowd enters and cheers
+    crowd.classList.add('show');
+    await wait(1000);
+    bubble.classList.add('show');
+    spawnConfetti(40);
+    await wait(1600);
+
+    // end state: keep crowd and bubble visible
+    startBtn.disabled = false;
+    startBtn.textContent = 'Play Again';
   }
 
-  // Floating magic inside the card
-  const floaters = document.getElementById('floating-elements');
-  const symbols = ['❤', '⭐', '✨'];
-  for(let i=0; i<18; i++) {
-    const el = document.createElement('div');
-    el.className = 'floater';
-    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    el.style.left = (Math.random() * 90 + 5) + '%'; // keep it somewhat inside
-    el.style.animationDuration = (3.5 + Math.random() * 4) + 's';
-    el.style.animationDelay = (Math.random() * 3) + 's';
-    floaters.appendChild(el);
+  // small stage dim/bright effect when lamp on
+  function stageGlow(on){
+    const stage = document.getElementById('stage');
+    if(on) stage.style.background = 'linear-gradient(180deg,#3b2a3f 0%, #1b1220 100%)';
+    else stage.style.background = '';
   }
 
-  /* ---------- confetti + balloons ---------- */
-  const fxLayer = document.createElement('div');
-  fxLayer.style.cssText = 'position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999;';
-  document.body.appendChild(fxLayer);
-
-  const confettiColors = ['#f6c667','#ff8fab','#c9a7ff','#8ff0d6','#ffffff','#ff7a3d'];
-  function spawnConfetti(count){
-    for(let i=0; i<count; i++){
-      const p = document.createElement('div');
-      p.className = 'confetti-piece';
-      p.style.left = (Math.random()*100)+'vw';
-      p.style.background = confettiColors[Math.floor(Math.random()*confettiColors.length)];
-      const dur = 2.4 + Math.random()*2.2;
-      p.style.animationDuration = dur+'s';
-      p.style.animationDelay = (Math.random()*0.4)+'s';
-      fxLayer.appendChild(p);
-      setTimeout(() => p.remove(), (dur+0.6)*1000);
+  // confetti
+  function spawnConfetti(n){
+    for(let i=0;i<n;i++){
+      const d = document.createElement('div');
+      d.className = 'conf';
+      d.style.left = (40 + Math.random()*40) + '%';
+      d.style.bottom = (120 + Math.random()*60) + 'px';
+      const colors = ['#ffd27a','#ff8fab','#c9a7ff','#8ff0d6','#ffffff','#ff7a3d'];
+      d.style.background = colors[Math.floor(Math.random()*colors.length)];
+      d.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.getElementById('stage').appendChild(d);
+      const dur = 1000 + Math.random()*1200;
+      d.animate([{transform:'translateY(0) rotate(0deg)',opacity:1},{transform:`translateY(-${300+Math.random()*300}px) rotate(${360+Math.random()*720}deg)`,opacity:0}],{duration:dur,easing:'cubic-bezier(.2,.9,.3,1)'});
+      setTimeout(()=>d.remove(), dur+50);
     }
   }
 
-  const balloonColors = ['#ff8fab','#c9a7ff','#8ff0d6','#f6c667','#ff9fc2'];
-  function spawnBalloons(count){
-    for(let i=0; i<count; i++){
+  // balloons rising pieces
+  function spawnBalloons(n){
+    for(let i=0;i<n;i++){
       const b = document.createElement('div');
-      b.className = 'balloon-piece';
-      b.style.left = (5+Math.random()*85)+'vw';
-      b.style.background = balloonColors[i % balloonColors.length];
-      const dur = 6 + Math.random()*3;
-      b.style.animationDuration = dur+'s';
-      b.style.animationDelay = (Math.random()*1.2)+'s';
-      fxLayer.appendChild(b);
-      setTimeout(() => b.remove(), (dur+1.6)*1000);
+      b.className = 'balloon';
+      b.style.left = (30 + Math.random()*40) + '%';
+      const colors = ['#ff9fc2','#c9a7ff','#8ff0d6','#f6c667'];
+      b.style.background = colors[Math.floor(Math.random()*colors.length)];
+      document.getElementById('stage').appendChild(b);
+      b.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-260px) scale(0.3)',opacity:0}],{duration:900+Math.random()*800,easing:'cubic-bezier(.2,.9,.3,1)'});
+      setTimeout(()=>b.remove(),1800);
     }
   }
 
-  /* ---------- happy birthday tune ---------- */
-  let audioCtx = null;
-  function getAudioCtx(){
-    if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
-    return audioCtx;
-  }
-
-  const NOTE = { C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, Bb4:466.16, C5:523.25 };
-
-  function buildMelody(){
-    const e = 0.19, q = 0.38, L = 1.05;
-    return [
-      [NOTE.C4,e],[NOTE.C4,e],[NOTE.D4,q],[NOTE.C4,q],[NOTE.F4,q],[NOTE.E4,L],
-      [NOTE.C4,e],[NOTE.C4,e],[NOTE.D4,q],[NOTE.C4,q],[NOTE.G4,q],[NOTE.F4,L],
-      [NOTE.C4,e],[NOTE.C4,e],[NOTE.C5,q],[NOTE.A4,q],[NOTE.F4,q],[NOTE.E4,q],[NOTE.D4,L],
-      [NOTE.Bb4,e],[NOTE.Bb4,e],[NOTE.A4,q],[NOTE.F4,q],[NOTE.G4,q],[NOTE.F4,L],
-    ];
-  }
-
-  function playHappyBirthdayTune(ctx){
-    const melody = buildMelody();
-    let t = ctx.currentTime + 0.05;
-    const master = ctx.createGain();
-    master.gain.value = 0.15; // smooth volume
-    master.connect(ctx.destination);
-    
-    melody.forEach(([freq,dur]) => {
-      const osc = ctx.createOscillator();
-      osc.type = 'triangle'; // softer sound
-      osc.frequency.value = freq;
-      
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(1, t+0.02);
-      g.gain.setValueAtTime(1, t+dur-0.08);
-      g.gain.linearRampToValueAtTime(0, t+dur-0.02);
-      
-      osc.connect(g);
-      g.connect(master);
-      osc.start(t);
-      osc.stop(t+dur);
-      t += dur;
-    });
-    return t - ctx.currentTime;
-  }
-
-  /* ---------- surprise button logic ---------- */
-  const surpriseBtn = document.getElementById('surpriseBtn');
-  const cardInner = document.getElementById('cardInner');
-  let confettiIntervalId = null;
-
-  surpriseBtn.addEventListener('click', () => {
-    if(surpriseBtn.disabled) return;
-    
-    const ctx = getAudioCtx();
-    const duration = playHappyBirthdayTune(ctx);
-
-    cardInner.classList.add('partying');
-    spawnConfetti(60);
-    spawnBalloons(10);
-    confettiIntervalId = setInterval(() => spawnConfetti(15), 1300);
-
-    surpriseBtn.disabled = true;
-    surpriseBtn.textContent = '🎶 Singing...';
-
-    setTimeout(() => {
-      cardInner.classList.remove('partying');
-      clearInterval(confettiIntervalId);
-      spawnConfetti(40);
-      surpriseBtn.disabled = false;
-      surpriseBtn.textContent = '🎉 Tap for a Surprise again! 🎉';
-    }, duration * 1000 + 300);
+  // allow replay
+  startBtn.addEventListener('click', ()=>{
+    // reset scene
+    resetScene();
+    runSequence();
   });
+
+  function resetScene(){
+    hero.classList.remove('enter'); hero.style.transform='';
+    lamp.classList.remove('on'); table.classList.remove('raised'); cake.classList.remove('show'); flame.classList.remove('on'); smoke.classList.remove('up');
+    ball1.classList.remove('pop'); ball2.classList.remove('pop'); crowd.classList.remove('show'); bubble.classList.remove('show');
+    // remove confetti elements if any
+    document.querySelectorAll('.conf, .balloon').forEach(n=>{ if(n.parentNode) n.remove(); });
+    startBtn.textContent = 'Start Surprise';
+  }
+
+  // responsive scaling for the inner scene
+  function resizeStage(){
+    const outer = document.getElementById('stage');
+    const inner = document.getElementById('stageInner');
+    if(!outer || !inner) return;
+    const ow = outer.clientWidth;
+    const oh = outer.clientHeight;
+    const scale = Math.min(ow/900, oh/540, 1);
+    inner.style.setProperty('--s', scale);
+  }
+  window.addEventListener('resize', resizeStage);
+
+  // autoplay first time gently (after resizing)
+  window.addEventListener('load', ()=>{ resizeStage(); setTimeout(()=> runSequence(), 700); });
 </script>
 
 </body>
